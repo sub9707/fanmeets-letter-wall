@@ -1,0 +1,19 @@
+// 세 설정이 공유하는 옵션
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // 타입 검사만 한다. 실제 변환은 Vite(화면·Worker)와 tsx(스크립트)가 한다
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true
+  }
+}

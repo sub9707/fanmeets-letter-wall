@@ -1,0 +1,9 @@
+// Node 에서 도는 설정 파일과 스크립트
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": ["node"]
+  },
+  "include": ["vite.config.ts", "scripts"]
+}

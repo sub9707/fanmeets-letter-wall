@@ -1,0 +1,79 @@
+/* 읽기 페이지의 주인공 조작부 */
+
+/* 보기 전용 화면의 키 입력 버튼: 평소에는 거의 안 보이고 마우스를 올리면 나타난다 */
+.key-button {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 5;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 20px;
+  background: rgba(74, 44, 32, 0.45);
+  color: #fff;
+  font-size: 14px;
+  opacity: 0.08;
+  transition: opacity 200ms ease-out;
+}
+
+.key-button:hover {
+  opacity: 1;
+}
+
+.read-overlay {
+  position: absolute;
+  top: 50%;
+  /* 트레이를 뺀 영역의 가운데 */
+  left: calc((100% - var(--tray-w)) / 2);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  transform: translate(-50%, -50%);
+  animation: fade-in 300ms ease-out;
+}
+
+.btn-shuffle-big {
+  width: 190px;
+  height: 190px;
+  border: 3px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  background: rgba(30, 20, 16, 0.5);
+  color: #fff;
+  font-size: 40px;
+  font-weight: 800;
+  transition:
+    transform 120ms ease-out,
+    background 120ms ease-out;
+}
+
+.btn-shuffle-big:hover {
+  background: rgba(30, 20, 16, 0.62);
+}
+
+.btn-shuffle-big:active {
+  transform: scale(0.94);
+}
+
+.btn-select {
+  height: 56px;
+  padding: 0 40px;
+  font-size: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.select-hint {
+  position: absolute;
+  left: calc((100% - var(--tray-w)) / 2);
+  bottom: 22px;
+  z-index: 4;
+  padding: 10px 22px;
+  border-radius: 20px;
+  background: rgba(30, 20, 16, 0.55);
+  color: #fff;
+  font-size: 15px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: fade-in 300ms ease-out;
+}

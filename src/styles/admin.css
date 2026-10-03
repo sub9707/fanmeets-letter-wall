@@ -1,0 +1,141 @@
+/* 관리 페이지 (일반 웹 페이지, 세로로 스크롤) */
+
+.admin {
+  height: 100vh;
+  overflow-y: auto;
+  background: #f7f4ef;
+  user-select: text;
+}
+
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 24px;
+  background: #fff;
+  border-bottom: 1px solid #e7e1d8;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.admin-home {
+  font-size: 22px;
+  color: var(--brown);
+  text-decoration: none;
+}
+
+.admin-count {
+  font-size: 15px;
+  color: rgba(42, 27, 21, 0.6);
+}
+
+.admin-tools {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.admin-list {
+  max-width: 1100px;
+  margin: 16px auto 40px;
+  padding: 0;
+  list-style: none;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.admin-empty {
+  margin-top: 80px;
+  text-align: center;
+  color: rgba(42, 27, 21, 0.5);
+}
+
+/* 키 확인 전 */
+.admin-gate {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f7f4ef;
+  color: rgba(42, 27, 21, 0.6);
+}
+
+/* 목록 한 줄 (EditRow) */
+
+.edit-row {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 24px;
+  border-bottom: 1px solid #f0ebe3;
+}
+
+.edit-no {
+  font-size: 13px;
+  color: rgba(42, 27, 21, 0.45);
+}
+
+.edit-text {
+  font-size: 16px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.edit-badge {
+  margin-right: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #e7e1d8;
+  font-size: 12px;
+  color: rgba(42, 27, 21, 0.7);
+}
+
+.edit-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 2px solid var(--brown);
+  border-radius: 8px;
+  outline: none;
+  font: inherit;
+  font-size: 16px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.edit-actions button,
+.admin-tools button {
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid rgba(74, 44, 32, 0.3);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.edit-actions button.danger,
+.admin-tools button.danger {
+  border-color: rgba(163, 38, 42, 0.4);
+  color: var(--seal);
+}
+
+.admin-tools button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

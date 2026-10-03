@@ -1,0 +1,185 @@
+/* 공통: 색·시간 변수, 무대, 배경, 버튼. 무대 안의 크기는 모두 1920x1080 기준 px 이다
+   (무대를 통째로 확대·축소하므로 vw/vh 를 쓰지 않는다). */
+
+:root {
+  --bg: #f3f0ea;
+  --ink: #2a1b15;
+  --brown: #4a2c20;
+  --paper: #f1e3c6;
+  --seal: #a3262a;
+  /* 감속·가속이 모두 있는 이동 곡선 */
+  --ease-move: cubic-bezier(0.65, 0, 0.35, 1);
+  --move-ms: 680ms;
+  /* 편지 이동(섞기·정렬·트레이) 시간. src/config.js 의 MOVE_MS 와 같은 값 */
+  --letter-ms: 1200ms;
+  /* 배경에 쌓인 편지의 불투명도 (선택 단계 제외) */
+  --wall-opacity: 0.6;
+  /* 배경 펜 글씨의 진하기 */
+  --pen-opacity: 0.9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  color: var(--ink);
+  font-family: 'Pretendard', 'Malgun Gothic', system-ui, sans-serif;
+  user-select: none;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+/* 창 전체. 무대 밖으로 남는 곳도 같은 종이 배경이 이어진다 */
+.viewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--bg) url('../assets/background.webp') center / cover no-repeat;
+}
+
+/* 고정 크기 무대 (크기와 배율은 Stage.jsx 가 넣는다).
+   무대 가장자리에서 내용이 칼같이 잘리지 않도록 넘치는 부분은 그대로 두고, 창(.viewport)에서만 자른다 */
+.stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+}
+
+/* 무대 중앙 배경의 펜 글씨 "To. BWS" (편지보다 뒤) */
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+  width: 1075px;
+  opacity: var(--pen-opacity);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* ───────── 읽은 편지 트레이 ───────── */
+
+.tray {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: var(--tray-w);
+  padding: 22px 14px;
+  opacity: 0;
+  transform: translateX(100%);
+  transition:
+    transform var(--move-ms) var(--ease-move),
+    opacity var(--move-ms) ease-out;
+  text-align: center;
+}
+
+/* 트레이 바탕. 무대보다 큰 창에서도 끊기지 않게 위·아래·오른쪽으로 넉넉히 늘린다 */
+.tray::before {
+  content: '';
+  position: absolute;
+  inset: -4000px -4000px -4000px 0;
+  z-index: -1;
+  background: rgba(74, 44, 32, 0.08);
+  border-left: 2px dashed rgba(74, 44, 32, 0.25);
+}
+
+.stage.reading .tray {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.tray-title {
+  font-weight: 700;
+  color: var(--brown);
+}
+
+.tray-empty {
+  margin-top: 60px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(74, 44, 32, 0.55);
+}
+
+/* ───────── 버튼 ───────── */
+
+.btn {
+  height: 48px;
+  padding: 0 26px;
+  border: none;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 700;
+  transition: transform 120ms ease-out;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-dark {
+  background: var(--brown);
+  color: #fff;
+}
+
+.btn-light {
+  background: #e7e1d8;
+  color: var(--ink);
+}
+
+.btn-ghost {
+  background: rgba(74, 44, 32, 0.45);
+  color: #fff;
+}
+
+.corner {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 5;
+  display: flex;
+  gap: 10px;
+}
+
+/* 서버 연결이 끊겼을 때 */
+.connection-badge {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  z-index: 20;
+  padding: 10px 22px;
+  border-radius: 20px;
+  background: rgba(163, 38, 42, 0.92);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}

@@ -1,0 +1,117 @@
+/* 작성 UI */
+
+/* 대기 상태: 배경 위에 떠 있는 반투명 안내. 중앙 펜 글씨 아래 끝과 무대 바닥의 정중앙 */
+.idle-prompt {
+  position: absolute;
+  top: 852px;
+  left: 50%;
+  z-index: 3;
+  padding: 22px 48px;
+  border-radius: 44px;
+  background: rgba(30, 20, 16, 0.5);
+  color: #fff;
+  font-size: 26px;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: prompt-pulse 2.4s ease-in-out infinite;
+}
+
+.idle-prompt b {
+  font-weight: 800;
+}
+
+/* 작성 상태: 살짝 어두운 반투명 배경 위에 편지지 + 입력 UI */
+.composer {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  animation: fade-in 200ms ease-out;
+}
+
+/* 어두운 배경은 무대보다 큰 창에서도 창 전체를 덮도록 넉넉히 늘린다 */
+.composer::before {
+  content: '';
+  position: absolute;
+  inset: -4000px;
+  background: rgba(20, 12, 8, 0.15);
+}
+
+.composer-paper {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 입력창 중심이 대기 안내(.idle-prompt)와 같은 높이(852px)에 온다 */
+.write-form {
+  position: absolute;
+  top: 824px;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 760px;
+  transform: translateX(-50%);
+}
+
+.write-input {
+  width: 100%;
+  height: 56px;
+  padding: 0 28px;
+  border: none;
+  border-radius: 28px;
+  outline: none;
+  background: #3b3735;
+  color: #fff;
+  font: inherit;
+  font-size: 20px;
+  text-align: center;
+  user-select: text;
+}
+
+.write-input::placeholder {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.btn-enter {
+  height: 40px;
+  padding: 0 34px;
+  border: none;
+  border-radius: 20px;
+  background: #111;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.write-hints {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.7;
+  text-align: center;
+  font-weight: 600;
+  color: rgba(42, 27, 21, 0.85);
+}
+
+/* 전송 실패 안내 */
+.write-notice {
+  margin: 10px 0 0;
+  padding: 10px 20px;
+  border-radius: 12px;
+  background: rgba(163, 38, 42, 0.92);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+@keyframes prompt-pulse {
+  50% {
+    opacity: 0.6;
+  }
+}

@@ -1,0 +1,86 @@
+/* 편지 레이어 */
+
+.letters {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.letter {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--lw);
+  height: var(--lh);
+  /* translate 좌표가 편지의 중심이 되도록 */
+  margin: calc(var(--lh) / -2) 0 0 calc(var(--lw) / -2);
+  /* z-index 도 같이 전환해서 겹침 순서가 한 프레임에 확 바뀌지 않고 이동하는 동안 서서히 바뀌게 한다 */
+  transition:
+    transform var(--letter-ms) var(--ease-move),
+    z-index var(--letter-ms) linear,
+    opacity 400ms ease-out;
+  will-change: transform;
+  contain: layout style;
+  pointer-events: none;
+}
+
+.letter-face {
+  width: 100%;
+  height: 100%;
+  /* 편지 100통이 같은 이미지 한 장을 공유한다 (디코딩 1회) */
+  background: url('../assets/envelope.webp') center / 100% 100% no-repeat;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(40, 20, 10, 0.25);
+  transition:
+    transform 200ms ease-out,
+    box-shadow 200ms ease-out;
+}
+
+/* 배경에 쌓인 편지는 반투명(뒤 배경이 비쳐 보임), 고르는 선택 단계에서만 선명하게 */
+.letter.wall {
+  opacity: var(--wall-opacity);
+}
+
+.stage.selecting .letter.wall {
+  opacity: 1;
+}
+
+/* 작성 모드에서는 읽은 편지가 트레이와 함께 오른쪽으로 빠지면서 사라진다 */
+.stage.writing .letter.read {
+  opacity: 0;
+}
+
+/* 여기부터는 진행자 권한이 확인된 화면(.interactive)에서만: 편지를 누르고 마우스를 올릴 수 있다.
+   선택 단계에서는 배경 편지를, 읽기 모드에서는 트레이 편지를 누를 수 있다 */
+.stage.interactive.selecting .letter.wall,
+.stage.interactive.reading .letter.read {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.stage.interactive.selecting .letter.wall:hover .letter-face,
+.stage.interactive.reading .letter.read:hover .letter-face {
+  transform: scale(1.1);
+}
+
+/* 마우스를 올린 편지는 살짝 들리면서 다른 편지들 위로 올라온다.
+   섞기 이동 중(.moving)이 아닐 때는 겹침 순서를 빠르게 바꿔서, 올리면 바로 올라오고 떼면 금방 제자리로 내려간다 */
+.stage.interactive.selecting:not(.moving) .letter.wall {
+  transition:
+    transform var(--letter-ms) var(--ease-move),
+    z-index 220ms linear,
+    opacity 400ms ease-out;
+}
+
+.stage.interactive.selecting .letter.wall:hover {
+  z-index: 2000 !important;
+  transition:
+    transform var(--letter-ms) var(--ease-move),
+    z-index 0s,
+    opacity 400ms ease-out;
+}
+
+.stage.interactive.selecting .letter.wall:hover .letter-face {
+  box-shadow: 0 10px 28px rgba(40, 20, 10, 0.4);
+}

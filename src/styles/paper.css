@@ -1,0 +1,78 @@
+/* 편지지 (읽기 모달 / 작성 화면 공용) */
+
+.paper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  /* 편지지 이미지(4:3) 비율 그대로. 테두리 장식 안쪽에 내용이 들어가도록 여백을 비율로 준다 */
+  height: 800px;
+  aspect-ratio: 4 / 3;
+  padding: 7% 10% 6%;
+  background: var(--paper) url('../assets/letter.webp') center / 100% 100% no-repeat;
+  border-radius: 4px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  animation: pop-in 320ms cubic-bezier(0.2, 0.9, 0.3, 1.15);
+}
+
+/* 펜 글씨 "To. BWS" */
+.paper-title {
+  width: 26%;
+  opacity: 0.85;
+}
+
+.paper-text {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  line-height: 1.5;
+  text-align: center;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.paper-text.short {
+  font-size: 52px;
+}
+
+.paper-text.medium {
+  font-size: 42px;
+}
+
+.paper-text.long {
+  font-size: 32px;
+}
+
+.paper-text.xlong {
+  font-size: 26px;
+}
+
+.paper-text.empty {
+  font-size: 24px;
+  color: rgba(74, 44, 32, 0.35);
+}
+
+/* 작성 화면용 작은 편지지 */
+.paper.compact {
+  gap: 12px;
+  height: 600px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.paper.compact .paper-text.short {
+  font-size: 44px;
+}
+
+.paper.compact .paper-text.medium {
+  font-size: 36px;
+}
+
+.paper.compact .paper-text.long {
+  font-size: 28px;
+}
+
+.paper.compact .paper-text.xlong {
+  font-size: 22px;
+}
