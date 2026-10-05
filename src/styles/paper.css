@@ -27,6 +27,8 @@
   display: flex;
   align-items: center;
   margin: 0;
+  /* 멀리서도 잘 보이게 규정 안에서 가장 굵게 (윤고딕 330 + DIN Medium, styles/fonts.css) */
+  font-weight: 700;
   line-height: 1.5;
   text-align: center;
   word-break: keep-all;
@@ -51,6 +53,7 @@
 
 .paper-text.empty {
   font-size: 24px;
+  font-weight: 400;
   color: rgba(74, 44, 32, 0.35);
 }
 
