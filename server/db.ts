@@ -9,6 +9,7 @@ export type Write =
   | { kind: 'setText'; id: string; text: string }
   | { kind: 'setStatus'; id: string; status: LetterStatus; readAt: number | null }
   | { kind: 'remove'; id: string }
+  | { kind: 'unreadAll' }
   | { kind: 'clear' }
 
 type Sql = postgres.Sql | postgres.TransactionSql
@@ -87,6 +88,9 @@ async function apply(sql: Sql, write: Write): Promise<void> {
       return
     case 'setStatus':
       await sql`UPDATE letters SET status = ${write.status}, read_at = ${write.readAt} WHERE id = ${write.id}`
+      return
+    case 'unreadAll':
+      await sql`UPDATE letters SET status = 'wall', read_at = NULL WHERE status = 'read'`
       return
     case 'remove':
       await sql`DELETE FROM letters WHERE id = ${write.id}`

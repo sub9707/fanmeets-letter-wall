@@ -50,7 +50,7 @@ export interface ServerState {
 export type Action =
   // 편지 쓰기 (누구나)
   | { type: 'add'; texts: string[] }
-  // 읽기 진행 (진행자 키 필요)
+  // 읽기 진행 (누구나)
   | { type: 'setPhase'; phase: Phase }
   | { type: 'shuffle'; scatter: Scatter }
   | { type: 'open'; id: string }
@@ -61,8 +61,8 @@ export type Action =
   | { type: 'remove'; id: string }
   | { type: 'clear' }
 
-/** 진행자 키 없이도 보낼 수 있는 액션 */
-export const PUBLIC_ACTIONS: readonly Action['type'][] = ['add']
+/** 진행자 키 없이도 보낼 수 있는 액션 (관리 액션만 키가 필요하다) */
+export const PUBLIC_ACTIONS: readonly Action['type'][] = ['add', 'setPhase', 'shuffle', 'open', 'close', 'reset']
 
 /** 서버 → 화면. 상태를 물어보거나 액션을 보내면 항상 전체 상태가 돌아온다 */
 export interface StateView extends ServerState {

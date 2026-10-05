@@ -52,7 +52,7 @@
   transition: opacity var(--read-fade-ms) ease-out;
 }
 
-/* 여기부터는 진행자 권한이 확인된 화면(.interactive)에서만: 선택 단계에서 편지를 누르고 마우스를 올릴 수 있다 */
+/* 여기부터는 조작할 수 있는 읽기 화면(.interactive)에서만: 선택 단계에서 편지를 누르고 마우스를 올릴 수 있다 */
 .stage.interactive.selecting .letter.wall {
   pointer-events: auto;
   cursor: pointer;

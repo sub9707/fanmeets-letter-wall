@@ -1,25 +1,5 @@
 /* 읽기 페이지의 주인공 조작부 */
 
-/* 보기 전용 화면의 키 입력 버튼: 평소에는 거의 안 보이고 마우스를 올리면 나타난다 */
-.key-button {
-  position: absolute;
-  right: 18px;
-  bottom: 18px;
-  z-index: 5;
-  padding: 10px 18px;
-  border: none;
-  border-radius: 20px;
-  background: rgba(74, 44, 32, 0.45);
-  color: #fff;
-  font-size: 14px;
-  opacity: 0.08;
-  transition: opacity 200ms ease-out;
-}
-
-.key-button:hover {
-  opacity: 1;
-}
-
 .read-overlay {
   position: absolute;
   top: 50%;

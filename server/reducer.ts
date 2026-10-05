@@ -82,9 +82,11 @@ const handlers: Handlers = {
     return withScene(state, { ...state.scene, openId: null }, letters, [{ kind: 'setStatus', id, status: 'read', readAt }])
   },
 
-  // 읽기 화면을 처음(정렬 + 섞기 버튼)으로
+  // 읽기 화면을 처음(정렬 + 섞기 버튼)으로. 읽은 편지도 모두 다시 배경으로 돌아온다
   reset(state) {
-    return withScene(state, { ...initialScene(), shuffleSeq: state.scene.shuffleSeq })
+    const letters = state.letters.map((l) => (l.status === 'read' ? { ...l, status: 'wall' as const, readAt: null } : l))
+    const writes: Write[] = state.letters.some((l) => l.status === 'read') ? [{ kind: 'unreadAll' }] : []
+    return withScene(state, { ...initialScene(), shuffleSeq: state.scene.shuffleSeq }, letters, writes)
   },
 
   update(state, { id, text }) {

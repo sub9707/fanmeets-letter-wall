@@ -39,7 +39,7 @@ async function handleAction(request: Request, host: boolean): Promise<Response> 
     return json({ error: '잘못된 요청' }, 400)
   }
   if (!isAction(action)) return json({ error: '잘못된 액션' }, 400)
-  // 편지 쓰기 말고는 진행자만 할 수 있다
+  // 관리(수정·삭제)는 진행자만 할 수 있다
   if (!host && !PUBLIC_ACTIONS.includes(action.type)) return json({ error: '진행자 키가 필요합니다' }, 403)
 
   const changed = await transact((current) => {

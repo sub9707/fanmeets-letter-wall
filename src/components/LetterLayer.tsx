@@ -43,12 +43,12 @@ function LetterLayer({ letters: all, scatter, onPick }: Props) {
 
   // 접속했을 때 이미 있던 편지는 그냥 놓고, 그 뒤에 도착한 편지만 등장 애니메이션을 준다
   const seen = useRef<Set<string> | null>(null)
-  if (seen.current === null) seen.current = new Set(letters.map((l) => l.id))
+  if (seen.current === null) seen.current = new Set(all.map((l) => l.id))
   const known = seen.current
   const fresh = letters.filter((l) => !known.has(l.id)).map((l) => l.id)
   useEffect(() => {
-    for (const l of letters) known.add(l.id)
-  }, [letters, known])
+    for (const l of all) known.add(l.id)
+  }, [all, known])
 
   // 편지 100통에 각각 핸들러를 달지 않고 레이어 하나에서 위임 처리
   const onClick = (e: MouseEvent<HTMLDivElement>) => {
@@ -68,7 +68,8 @@ function LetterLayer({ letters: all, scatter, onPick }: Props) {
           spawn={fresh.includes(l.id)}
         />
       ))}
-      {fading.map((f) => (
+      {/* 사라지는 도중에 초기화로 배경에 돌아온 편지는 배경 쪽으로만 그린다 */}
+      {fading.filter((f) => !letters.some((l) => l.id === f.id)).map((f) => (
         <Letter key={f.id} id={f.id} {...f.pose} delay={0} spawn={false} fading />
       ))}
     </div>
