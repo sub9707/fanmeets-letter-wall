@@ -1,7 +1,9 @@
 node_modules
 dist
-.wrangler
-.dev.vars
-
+.env.local
 # 원본 이미지(수십 MB)는 저장소에 넣지 않는다. 앱은 src/assets 의 변환본(WebP)만 쓴다
 assets-src
+.vercel
+# 예전 Cloudflare 로컬 개발 흔적
+.wrangler
+.dev.vars

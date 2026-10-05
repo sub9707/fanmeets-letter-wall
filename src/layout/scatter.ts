@@ -1,9 +1,9 @@
 // 섞기: 편지를 화면 전체에 무작위 위치·각도·크기로 흩뿌린 포즈를 만든다.
 // 섞기를 누른 PC 가 한 번 계산해서 서버로 보내고, 모든 PC 가 같은 포즈를 그린다.
 import type { Pose, Scatter } from '../../shared/types.ts'
-import { AREA_H, LETTER_ASPECT } from './constants.ts'
+import { AREA_H, AREA_W, LETTER_ASPECT } from './constants.ts'
 import { assignDepth } from './depth.ts'
-import { AREA_W, type Candidate, place } from './geometry.ts'
+import { type Candidate, place } from './geometry.ts'
 import { round, round3, shuffled } from './util.ts'
 
 const candidate = (u = Math.random(), v = Math.random()): Candidate => ({
@@ -34,12 +34,4 @@ export function scatterPoses(ids: string[]): Scatter {
   assignDepth(candidates, n)
 
   return Object.fromEntries(ids.map((id, i) => [id, toPose(candidates[i], n)]))
-}
-
-// 트레이에서 돌아온 편지 한 통의 자리. 다른 편지 밑에 깔리지 않게 맨 위(z)에 놓는다
-export function scatterOne(scatter: Scatter): Pose {
-  const poses = Object.values(scatter)
-  const c = candidate()
-  c.z = 1 + Math.max(0, ...poses.map((p) => p.z))
-  return toPose(c, poses.length + 1)
 }

@@ -1,0 +1,37 @@
+/* 교촌 브랜드 폰트 사용 규정 (assets-src/fonts/교촌치킨 브랜드-폰트 사용 규정.png)
+   국문 | 윤고딕 300대 (장평 93 / 자간 -50 → scripts/build-fonts.py 가 폰트 파일에 넣어 둠)
+   영문·숫자·기호 | DIN
+   보통(~450): 윤고딕 310 + DIN Light, 굵게(451~): 윤고딕 320~330 + DIN Medium
+   'Brand' 하나로 쓰면 DIN 에 없는 한글만 윤고딕으로 넘어간다. */
+
+@font-face {
+  font-family: 'Brand Latin';
+  src: url('../assets/fonts/din-light.woff2') format('woff2');
+  font-weight: 100 450;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Brand Latin';
+  src: url('../assets/fonts/din-medium.woff2') format('woff2');
+  font-weight: 451 900;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Brand Korean';
+  src: url('../assets/fonts/yoon-310.woff2') format('woff2');
+  font-weight: 100 450;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Brand Korean';
+  src: url('../assets/fonts/yoon-320.woff2') format('woff2');
+  font-weight: 451 650;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Brand Korean';
+  src: url('../assets/fonts/yoon-330.woff2') format('woff2');
+  font-weight: 651 900;
+  font-display: block;
+}

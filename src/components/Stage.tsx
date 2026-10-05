@@ -1,7 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { STAGE_H, STAGE_W } from '../config.ts'
 import { useStageScale } from '../hooks/useStageScale.ts'
-import { LETTER_H, LETTER_W, TRAY_W } from '../layout/constants.ts'
+import { LETTER_H, LETTER_W } from '../layout/constants.ts'
 
 // 무대 크기와, 스타일에서 쓰는 CSS 변수
 const SIZE_VARS: CSSProperties & Record<`--${string}`, string> = {
@@ -9,7 +9,6 @@ const SIZE_VARS: CSSProperties & Record<`--${string}`, string> = {
   height: STAGE_H,
   '--lw': `${LETTER_W}px`,
   '--lh': `${LETTER_H}px`,
-  '--tray-w': `${TRAY_W}px`,
 }
 
 interface Props {

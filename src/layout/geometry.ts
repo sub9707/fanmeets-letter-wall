@@ -1,12 +1,9 @@
 // 흩뿌린 편지의 기하 계산 (위치·크기, 점이 편지 안에 있는지)
-import { AREA_H, LETTER_H, LETTER_W, areaWidth } from './constants.ts'
+import { AREA_H, AREA_W, LETTER_H, LETTER_W } from './constants.ts'
 
 const COVER = 1.7 // 편지 면적 합 / 화면 면적. 클수록 편지가 커지고 배경이 덜 비친다
 const MAX_W = 0.35 // 편지 한 통의 기준 너비 상한 (영역 너비 대비)
 const OVERHANG = 0.5 // 화면 가장자리 밖으로 걸칠 수 있는 정도 (가장자리가 비지 않게)
-const OVERHANG_TRAY = 0.1 // 트레이 쪽은 거의 넘어가지 않게
-
-export const AREA_W = areaWidth('read') // 흩뿌리기는 읽기 모드에서만 일어난다
 
 /** 흩뿌릴 편지 한 통의 후보값 */
 export interface Candidate {
@@ -44,7 +41,7 @@ export function place(c: Candidate, n: number): Box {
   const hx = (s * (Math.abs(cos) * LETTER_W + Math.abs(sin) * LETTER_H)) / 2
   const hy = (s * (Math.abs(sin) * LETTER_W + Math.abs(cos) * LETTER_H)) / 2
   const minX = hx * (1 - OVERHANG)
-  const maxX = AREA_W - hx * (1 - OVERHANG_TRAY)
+  const maxX = AREA_W - hx * (1 - OVERHANG)
   const minY = hy * (1 - OVERHANG)
   return { x: minX + c.u * (maxX - minX), y: minY + c.v * (AREA_H - minY * 2), s, cos, sin }
 }

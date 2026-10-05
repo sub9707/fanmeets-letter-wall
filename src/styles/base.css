@@ -10,8 +10,10 @@
   /* 감속·가속이 모두 있는 이동 곡선 */
   --ease-move: cubic-bezier(0.65, 0, 0.35, 1);
   --move-ms: 680ms;
-  /* 편지 이동(섞기·정렬·트레이) 시간. src/config.js 의 MOVE_MS 와 같은 값 */
+  /* 편지 이동(섞기·정렬) 시간. src/config.js 의 MOVE_MS 와 같은 값 */
   --letter-ms: 1200ms;
+  /* 읽은 편지가 서서히 사라지는 시간. src/config.ts 의 READ_FADE_MS 와 같은 값 */
+  --read-fade-ms: 1500ms;
   /* 배경에 쌓인 편지의 불투명도 (선택 단계 제외) */
   --wall-opacity: 0.6;
   /* 배경 펜 글씨의 진하기 */
@@ -32,12 +34,20 @@ body,
 body {
   overflow: hidden;
   color: var(--ink);
-  font-family: 'Pretendard', 'Malgun Gothic', system-ui, sans-serif;
+  /* 규정 폰트를 쓴다 (styles/fonts.css). 윤고딕에 없는 한글(완성형 2350자 밖: 뷁, 햏 …)만 맑은 고딕으로 그린다.
+     없는 굵기를 흉내 내 굵게 그리지 않게 */
+  font-family: 'Brand Latin', 'Brand Korean', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  font-synthesis: none;
   user-select: none;
 }
 
-button {
+button,
+input,
+textarea {
   font: inherit;
+}
+
+button {
   cursor: pointer;
 }
 
@@ -68,51 +78,6 @@ button {
   opacity: var(--pen-opacity);
   transform: translate(-50%, -50%);
   pointer-events: none;
-}
-
-/* ───────── 읽은 편지 트레이 ───────── */
-
-.tray {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  width: var(--tray-w);
-  padding: 22px 14px;
-  opacity: 0;
-  transform: translateX(100%);
-  transition:
-    transform var(--move-ms) var(--ease-move),
-    opacity var(--move-ms) ease-out;
-  text-align: center;
-}
-
-/* 트레이 바탕. 무대보다 큰 창에서도 끊기지 않게 위·아래·오른쪽으로 넉넉히 늘린다 */
-.tray::before {
-  content: '';
-  position: absolute;
-  inset: -4000px -4000px -4000px 0;
-  z-index: -1;
-  background: rgba(74, 44, 32, 0.08);
-  border-left: 2px dashed rgba(74, 44, 32, 0.25);
-}
-
-.stage.reading .tray {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.tray-title {
-  font-weight: 700;
-  color: var(--brown);
-}
-
-.tray-empty {
-  margin-top: 60px;
-  font-size: 13px;
-  line-height: 1.5;
-  color: rgba(74, 44, 32, 0.55);
 }
 
 /* ───────── 버튼 ───────── */

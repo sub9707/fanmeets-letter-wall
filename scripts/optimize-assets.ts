@@ -35,10 +35,10 @@ const jobs: Job[] = [
     run: (img) => img.trim().resize({ width: 1600 }).webp({ quality: 86, alphaQuality: 95 }),
   },
   {
-    // 편지지 (모달 / 작성 화면). 4K 에서 모달 높이가 약 1600px
-    from: 'letter_2400x1800_upscaled.png',
+    // 편지지 (모달 / 작성 화면, 16:10). 4K 에서 모달이 약 2560x1600px 로 그려진다
+    from: 'letter_1536x960.png',
     to: 'letter.webp',
-    run: (img) => img.webp({ quality: 84 }),
+    run: (img) => img.webp({ quality: 86 }),
   },
 ]
 

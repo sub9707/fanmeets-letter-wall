@@ -1,4 +1,4 @@
-// 서버(Worker)와 화면이 주고받는 데이터의 모양
+// 서버(Vercel Function)와 화면이 주고받는 데이터의 모양
 
 export type LetterStatus = 'wall' | 'read'
 
@@ -7,7 +7,7 @@ export interface Letter {
   /** 진행자 권한이 없는 연결에는 지금 펼친 편지 말고는 빈 문자열로 온다 */
   text: string
   createdAt: number
-  /** wall: 배경에 쌓인 편지, read: 읽어서 트레이로 간 편지 */
+  /** wall: 배경에 쌓인 편지, read: 읽은 편지 (화면에서 빠지고 관리 페이지에만 남는다) */
   status: LetterStatus
   readAt: number | null
   /** 정렬 상태의 미세한 기울기와 이동 시작 지연에 쓰는 고정 난수 (0~1) */
@@ -55,7 +55,6 @@ export type Action =
   | { type: 'shuffle'; scatter: Scatter }
   | { type: 'open'; id: string }
   | { type: 'close' }
-  | { type: 'restore'; id: string; pose: Pose | null }
   | { type: 'reset' }
   // 관리 (진행자 키 필요)
   | { type: 'update'; id: string; text: string }
@@ -65,15 +64,10 @@ export type Action =
 /** 진행자 키 없이도 보낼 수 있는 액션 */
 export const PUBLIC_ACTIONS: readonly Action['type'][] = ['add']
 
-/** 서버 → 화면. 바뀔 때마다 전체 상태가 온다 */
-export interface StateMessage extends ServerState {
-  type: 'state'
-}
-
-/** 서버 → 화면. 접속 직후 한 번, 이 연결이 진행자 권한을 가졌는지 알려준다 */
-export interface WelcomeMessage {
-  type: 'welcome'
+/** 서버 → 화면. 상태를 물어보거나 액션을 보내면 항상 전체 상태가 돌아온다 */
+export interface StateView extends ServerState {
+  /** 이 요청이 진행자 키를 가졌는가 */
   host: boolean
+  /** 상태가 바뀔 때마다 1씩 증가. 늦게 도착한 옛 응답을 버리는 데 쓴다 */
+  version: number
 }
-
-export type ServerMessage = StateMessage | WelcomeMessage

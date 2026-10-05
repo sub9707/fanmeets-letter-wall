@@ -46,21 +46,19 @@
   opacity: 1;
 }
 
-/* 작성 모드에서는 읽은 편지가 트레이와 함께 오른쪽으로 빠지면서 사라진다 */
-.stage.writing .letter.read {
+/* 읽은 편지는 마지막 자리에서 서서히 사라진다 (LetterLayer 가 다 사라진 뒤에 지운다) */
+.letter.fading {
   opacity: 0;
+  transition: opacity var(--read-fade-ms) ease-out;
 }
 
-/* 여기부터는 진행자 권한이 확인된 화면(.interactive)에서만: 편지를 누르고 마우스를 올릴 수 있다.
-   선택 단계에서는 배경 편지를, 읽기 모드에서는 트레이 편지를 누를 수 있다 */
-.stage.interactive.selecting .letter.wall,
-.stage.interactive.reading .letter.read {
+/* 여기부터는 진행자 권한이 확인된 화면(.interactive)에서만: 선택 단계에서 편지를 누르고 마우스를 올릴 수 있다 */
+.stage.interactive.selecting .letter.wall {
   pointer-events: auto;
   cursor: pointer;
 }
 
-.stage.interactive.selecting .letter.wall:hover .letter-face,
-.stage.interactive.reading .letter.read:hover .letter-face {
+.stage.interactive.selecting .letter.wall:hover .letter-face {
   transform: scale(1.1);
 }
 

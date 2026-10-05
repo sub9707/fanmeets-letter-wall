@@ -15,7 +15,7 @@ export default function WritePage() {
   return (
     <Stage className="writing">
       <Watermark />
-      {ready && <LetterLayer letters={letters} scatter={null} mode="write" />}
+      {ready && <LetterLayer letters={letters} scatter={null} />}
       <Composer active={ready} onSubmit={submit} />
       <ConnectionBadge online={online} ready={ready} />
     </Stage>

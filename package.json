@@ -3,24 +3,21 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "TO. BWS Q&A 편지 월 (React + Cloudflare Workers / D1 / Durable Objects)",
+  "description": "TO. BWS Q&A 편지 월 (React + Vercel Functions + Supabase)",
   "scripts": {
     "dev": "vite",
-    "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.worker.json && tsc -p tsconfig.node.json",
-    "build": "npm run typecheck && vite build",
-    "preview": "vite preview",
-    "deploy": "npm run build && wrangler deploy",
-    "db:migrate:local": "wrangler d1 migrations apply kyochon-comment-wall --local",
-    "db:migrate:remote": "wrangler d1 migrations apply kyochon-comment-wall --remote",
+    "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.server.json && tsc -p tsconfig.node.json",
+    "build": "npm run typecheck && vite build && tsx scripts/build-vercel.ts",
+    "db:setup": "tsx --env-file=.env.local scripts/db-setup.ts",
     "assets": "tsx scripts/optimize-assets.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
+    "postgres": "^3.4.9",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.62.5",
-    "@cloudflare/workers-types": "^5.20261002.1",
     "@types/node": "^26.6.4",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
@@ -28,7 +25,6 @@
     "sharp": "^0.35.5",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
-    "vite": "^8.3.2",
-    "wrangler": "^4.147.0"
+    "vite": "^8.3.2"
   }
 }

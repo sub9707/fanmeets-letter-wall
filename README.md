@@ -1,11 +1,13 @@
 # TO. BWS 편지 월
 
-팬미팅 Q&A 코너용 웹 앱. Cloudflare 에 올려 여러 PC·스크린에서 함께 씁니다.
+팬미팅 Q&A 코너용 웹 앱. Vercel(Hobby) 에 올려 여러 PC·스크린에서 함께 씁니다.
 
 - 화면: Vite + React (TypeScript)
-- 서버: Cloudflare Worker
-- 편지 저장: D1 (`kyochon-comment-wall`)
-- 실시간 동기화: Durable Object + WebSocket (읽기 진행 상태도 여기 저장)
+- 서버: Vercel Function (`/api/state`, `/api/action`, 서울 리전 `icn1`)
+- 저장: Supabase Postgres (`letters` 편지, `room` 읽기 진행 상태)
+- 실시간 동기화: 상태가 바뀌면 서버가 Supabase Realtime 채널(`letter-wall`)로 알리고, 각 화면이 `/api/state` 를 다시 받아옴
+  (알림이 빠져도 10초마다 다시 받아옴). 액션은 `room` 줄을 잠근 트랜잭션에서 하나씩 처리
+- 폰트: 교촌 브랜드 규정 (국문 윤고딕 300대 장평 93·자간 -50, 영문·숫자·기호 DIN). `src/styles/fonts.css`
 
 ## 페이지
 
@@ -13,7 +15,7 @@
 | --- | --- | --- |
 | `/` | 모두 | 세 페이지로 가는 큰 버튼 |
 | `/write` | 고객 | 편지 쓰기. 키 필요 없음. 편지 월에는 봉투만 보이고 내용은 보이지 않음 |
-| `/read` | 주인공(진행) | 섞기 → 선택하기 → 편지 펼치기 → 읽은 편지 트레이. **진행자 키 필요** |
+| `/read` | 주인공(진행) | 섞기 → 선택하기 → 편지 펼치기 (닫으면 읽은 편지로 화면에서 빠짐). **진행자 키 필요** |
 | `/read` (키 없이) | 대형 스크린·프로젝터 | 진행자가 조작하는 화면을 그대로 따라 보여줌 (조작 불가) |
 | `/admin` | 관리자·진행자 | 편지 목록 보기, 수정, 삭제. **진행자 키 필요** |
 
@@ -23,55 +25,53 @@
 편지 월 화면(`/write`, `/read`)은 1920x1080 기준으로 그린 뒤 창 크기에 맞춰 통째로 확대·축소하므로,
 와이드 스크린·롤스크린·PC 어디서든 배치가 같습니다. 전체화면은 브라우저에서 F11.
 
-## 배포
+## 배포 (Vercel)
 
-```
-npm install
-npx wrangler login
-npm run db:migrate:remote                 # D1 에 letters 테이블 만들기
-npx wrangler secret put HOST_KEY          # 진행자 키 정하기
-npm run deploy                            # 타입 검사 + 빌드 + 배포
-```
+1. Vercel 에 저장소를 연결하고 Supabase 연동(Integration)을 붙인다 → `POSTGRES_URL`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_PUBLISHABLE_KEY` 등이 자동으로 들어온다
+2. 프로젝트 환경 변수에 **`HOST_KEY`**(진행자 키)를 직접 추가한다
+3. 테이블 만들기 (처음 한 번, 로컬에서): `npm run db:setup`
+4. 배포: push 하면 Vercel 이 `npm run build` 를 돌린다. 빌드가 `.vercel/output`(Build Output API)을 만들어 그대로 올라간다
 
-D1 은 `wrangler.jsonc` 에 이미 연결되어 있습니다 (`kyochon-comment-wall`).
+설정은 `vercel.json`, 함수 리전·런타임은 `scripts/build-vercel.ts`.
 
 ## 로컬 개발
 
 ```
-npm run db:migrate:local    # 처음 한 번
-npm run dev                 # http://localhost:5173 (Worker·D1·Durable Object 가 로컬에서 같이 돈다)
+npm run db:setup    # 처음 한 번 (.env.local 의 Supabase 에 테이블 만들기)
+npm run dev         # http://localhost:5173 (/api 도 같은 코드로 같이 돈다)
 ```
 
-로컬 진행자 키는 `.dev.vars` 의 `HOST_KEY` 입니다 (기본 `local-host-key`).
+환경 변수는 `.env.local` (Vercel 연동 변수 그대로). 로컬 진행자 키는 `HOST_KEY` 가 없으면 `local-host-key`.
+로컬도 같은 Supabase DB 를 쓰므로 행사 중에는 로컬에서 편지를 지우지 않도록 주의.
 
 | 명령 | 용도 |
 | --- | --- |
 | `npm run dev` | 개발 서버 |
-| `npm run typecheck` | 타입 검사 (화면 / Worker / 스크립트) |
-| `npm run build` | 타입 검사 + 빌드 |
-| `npm run preview` | 빌드 결과를 로컬 Worker 로 실행 |
-| `npm run deploy` | 빌드 + Cloudflare 배포 |
-| `npm run db:migrate:local` / `:remote` | D1 마이그레이션 적용 |
+| `npm run typecheck` | 타입 검사 (화면 / 서버 / 스크립트) |
+| `npm run build` | 타입 검사 + 빌드 + Vercel 출력 |
+| `npm run db:setup` | `supabase/schema.sql` 적용 (여러 번 실행해도 안전) |
 | `npm run assets` | `assets-src/` 원본 이미지를 `src/assets/` WebP 로 변환 |
+| `python scripts/build-fonts.py` | `assets-src/fonts/` 원본 폰트를 규정(장평·자간)에 맞춘 WOFF2 로 변환 (`pip install fonttools brotli`) |
 
 ## 구조
 
 ```
-worker/            Cloudflare Worker
-  index.ts         /api/ws → Durable Object 로 연결 (진행자 키 확인)
-  LetterRoom.ts    Durable Object: 접속 관리, 액션 처리, 모든 화면에 상태 전송
+server/            Vercel Function
+  app.ts           /api/state, /api/action 처리 (진행자 키 확인, 진행자가 아니면 편지 내용 숨김)
   reducer.ts       액션 → 다음 상태 (순수 함수)
-  db.ts            D1 읽기/쓰기
-migrations/        D1 스키마
+  db.ts            Postgres 읽기/쓰기 (room 줄을 잠근 트랜잭션)
+  realtime.ts      바뀌었다고 Supabase Realtime 으로 알림
+  vercel.ts        함수 입구 (node.ts 로 req/res ↔ Request/Response)
+supabase/          DB 스키마
 shared/            Worker 와 화면이 같이 쓰는 타입·값 (편지, 진행 상태, 액션)
 src/
   App.tsx          주소에 맞는 페이지 고르기 (페이지마다 따로 내려받음)
   pages/           첫 화면 / 편지 쓰기 / 편지 읽기 / 편지 관리
-  components/      화면 조각 (편지, 편지지, 트레이, 작성창, 확인창 …)
+  components/      화면 조각 (편지, 편지지, 작성창, 확인창 …)
   hooks/           페이지별 조작(useReadActions, useAdminActions), 진행자 키, 무대 배율 …
-  net/             서버 상태를 받아오는 훅
+  net/             서버 상태를 받아오는 훅 (Realtime 알림 + /api)
   layout/          편지 배치 계산
   styles/          컴포넌트별 스타일
-assets-src/        원본 이미지
-scripts/           이미지 변환 스크립트
+assets-src/        원본 이미지·폰트 (저장소에 넣지 않음)
+scripts/           Vercel 출력, DB 설정, 이미지·폰트 변환 스크립트
 ```

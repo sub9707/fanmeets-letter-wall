@@ -23,8 +23,7 @@
 .read-overlay {
   position: absolute;
   top: 50%;
-  /* 트레이를 뺀 영역의 가운데 */
-  left: calc((100% - var(--tray-w)) / 2);
+  left: 50%;
   z-index: 4;
   display: flex;
   flex-direction: column;
@@ -65,7 +64,7 @@
 
 .select-hint {
   position: absolute;
-  left: calc((100% - var(--tray-w)) / 2);
+  left: 50%;
   bottom: 22px;
   z-index: 4;
   padding: 10px 22px;

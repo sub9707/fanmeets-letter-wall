@@ -1,14 +1,11 @@
-import { useMemo, useState } from 'react'
-import ConfirmDialog from '../components/ConfirmDialog.tsx'
+import { useState } from 'react'
 import ConnectionBadge from '../components/ConnectionBadge.tsx'
 import KeyDialog from '../components/KeyDialog.tsx'
 import LetterLayer from '../components/LetterLayer.tsx'
 import LetterModal from '../components/LetterModal.tsx'
 import ReadControls from '../components/ReadControls.tsx'
 import Stage from '../components/Stage.tsx'
-import Tray from '../components/Tray.tsx'
 import Watermark from '../components/Watermark.tsx'
-import { useConfirm } from '../hooks/useConfirm.ts'
 import { useHostKey } from '../hooks/useHostKey.ts'
 import { useKeyDown } from '../hooks/useKeyDown.ts'
 import { useMoving } from '../hooks/useMoving.ts'
@@ -21,18 +18,14 @@ import { useServerState } from '../net/useServerState.ts'
 export default function ReadPage() {
   const [key, setKey] = useHostKey()
   const { letters, scene, ready, online, isHost, send } = useServerState(key)
-  const { confirm, ask, cancel } = useConfirm()
-  const actions = useReadActions(send, letters, scene, ask)
+  const actions = useReadActions(send, letters, scene)
   const moving = useMoving(scene.shuffleSeq)
   const [askingKey, setAskingKey] = useState(false)
 
-  const readCount = useMemo(() => letters.filter((l) => l.status === 'read').length, [letters])
   const openLetter = scene.openId ? letters.find((l) => l.id === scene.openId) : undefined
 
   useKeyDown((e) => {
-    if (e.key !== 'Escape') return
-    if (confirm) cancel()
-    else if (openLetter && isHost) actions.closeLetter()
+    if (e.key === 'Escape' && openLetter && isHost) actions.closeLetter()
   })
 
   const stageClass = [
@@ -44,10 +37,9 @@ export default function ReadPage() {
 
   return (
     <Stage className={stageClass}>
-      <Tray count={readCount} />
       <Watermark />
       {ready && (
-        <LetterLayer letters={letters} scatter={scene.scatter} mode="read" onPick={isHost ? actions.pick : undefined} />
+        <LetterLayer letters={letters} scatter={scene.scatter} onPick={isHost ? actions.pick : undefined} />
       )}
 
       {isHost ? (
@@ -60,7 +52,6 @@ export default function ReadPage() {
       )}
 
       {openLetter && <LetterModal letter={openLetter} onClose={isHost ? actions.closeLetter : undefined} />}
-      {confirm && <ConfirmDialog {...confirm} onCancel={cancel} />}
       {askingKey && !isHost && (
         <KeyDialog
           rejected={Boolean(key) && ready}
