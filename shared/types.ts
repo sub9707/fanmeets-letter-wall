@@ -12,6 +12,9 @@ export interface Letter {
   readAt: number | null
   /** 정렬 상태의 미세한 기울기와 이동 시작 지연에 쓰는 고정 난수 (0~1) */
   jitter: number
+  /** 읽기 우선순위 (1부터). 읽기에서 편지를 고르면 아직 안 읽은 우선순위 편지가 순서대로 먼저 열린다.
+   *  null 이면 우선순위 없음. 진행자 권한이 없는 연결에는 항상 null 로 온다 */
+  priority: number | null
 }
 
 /** 무대 위 편지 한 통의 자리. x, y 는 편지 중심 */
@@ -60,6 +63,8 @@ export type Action =
   | { type: 'update'; id: string; text: string }
   | { type: 'remove'; id: string }
   | { type: 'clear' }
+  /** 읽기 우선순위를 통째로 정한다. ids 순서대로 1, 2, 3… 나머지는 우선순위 없음 */
+  | { type: 'setPriorities'; ids: string[] }
 
 /** 진행자 키 없이도 보낼 수 있는 액션 (관리 액션만 키가 필요하다) */
 export const PUBLIC_ACTIONS: readonly Action['type'][] = ['add', 'setPhase', 'shuffle', 'open', 'close', 'reset']

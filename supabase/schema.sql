@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS letters (
   seq BIGINT GENERATED ALWAYS AS IDENTITY
 );
 
+-- 읽기 우선순위 (1부터, NULL 이면 없음)
+ALTER TABLE letters ADD COLUMN IF NOT EXISTS priority INT;
+
 CREATE INDEX IF NOT EXISTS letters_created_at ON letters (created_at, seq);
 
 -- 읽기 진행 상태 (한 줄짜리). 액션은 이 줄을 잠근 채로 하나씩 처리한다

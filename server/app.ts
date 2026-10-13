@@ -17,11 +17,13 @@ function isHost(request: Request): boolean {
   return a.byteLength === b.byteLength && timingSafeEqual(a, b)
 }
 
-// 진행자가 아닌 요청(편지 쓰는 고객, 보기 전용 스크린)에는 편지 내용을 보내지 않는다.
+// 진행자가 아닌 요청(편지 쓰는 고객, 보기 전용 스크린)에는 편지 내용과 우선순위를 보내지 않는다.
 // 지금 펼쳐 읽는 편지만은 화면에 띄워야 하므로 내용을 남긴다.
 function view(snapshot: Snapshot, host: boolean): StateView {
   const { scene, version } = snapshot
-  const letters = host ? snapshot.letters : snapshot.letters.map((l) => (l.id === scene.openId ? l : { ...l, text: '' }))
+  const letters = host
+    ? snapshot.letters
+    : snapshot.letters.map((l) => ({ ...l, text: l.id === scene.openId ? l.text : '', priority: null }))
   return { letters, scene, version, host }
 }
 

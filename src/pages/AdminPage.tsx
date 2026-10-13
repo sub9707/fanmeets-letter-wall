@@ -2,8 +2,9 @@ import { useState } from 'react'
 import ConfirmDialog from '../components/ConfirmDialog.tsx'
 import EditRow from '../components/EditRow.tsx'
 import KeyDialog from '../components/KeyDialog.tsx'
+import PriorityList from '../components/PriorityList.tsx'
 import { PAGES } from '../config.ts'
-import { useAdminActions } from '../hooks/useAdminActions.ts'
+import { priorityOrder, useAdminActions } from '../hooks/useAdminActions.ts'
 import { useConfirm } from '../hooks/useConfirm.ts'
 import { useHostKey } from '../hooks/useHostKey.ts'
 import { useServerState } from '../net/useServerState.ts'
@@ -29,6 +30,7 @@ export default function AdminPage() {
   }
 
   const readCount = letters.filter((l) => l.status === 'read').length
+  const priorities = priorityOrder(letters)
 
   return (
     <div className="admin">
@@ -50,6 +52,13 @@ export default function AdminPage() {
         </span>
       </header>
 
+      <PriorityList
+        letters={priorities}
+        onMove={actions.movePriority}
+        onRemove={actions.togglePriority}
+        onClear={actions.clearPriorities}
+      />
+
       {letters.length === 0 ? (
         <p className="admin-empty">아직 작성된 편지가 없습니다</p>
       ) : (
@@ -63,6 +72,7 @@ export default function AdminPage() {
               onEdit={setEditingId}
               onUpdate={actions.update}
               onRemove={actions.askRemove}
+              onTogglePriority={actions.togglePriority}
             />
           ))}
         </ul>

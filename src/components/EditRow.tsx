@@ -11,10 +11,11 @@ interface Props {
   onEdit: (id: string | null) => void
   onUpdate: (id: string, text: string) => void
   onRemove: (letter: Letter) => void
+  onTogglePriority: (letter: Letter) => void
 }
 
 // 편집 목록의 한 줄. 수정 중일 때만 입력창으로 바뀐다.
-function EditRow({ letter, index, editing, onEdit, onUpdate, onRemove }: Props) {
+function EditRow({ letter, index, editing, onEdit, onUpdate, onRemove, onTogglePriority }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const stop = () => onEdit(null)
 
@@ -56,6 +57,7 @@ function EditRow({ letter, index, editing, onEdit, onUpdate, onRemove }: Props) 
         />
       ) : (
         <span className="edit-text">
+          {letter.priority !== null && <span className="edit-badge priority">우선 {letter.priority}</span>}
           {letter.status === 'read' && <span className="edit-badge">읽음</span>}
           {letter.text}
         </span>
@@ -69,9 +71,18 @@ function EditRow({ letter, index, editing, onEdit, onUpdate, onRemove }: Props) 
             취소
           </button>
         ) : (
-          <button type="button" className="danger" onClick={() => onRemove(letter)}>
-            삭제
-          </button>
+          <>
+            <button
+              type="button"
+              className={letter.priority !== null ? 'active' : undefined}
+              onClick={() => onTogglePriority(letter)}
+            >
+              {letter.priority !== null ? '우선 해제' : '우선 지정'}
+            </button>
+            <button type="button" className="danger" onClick={() => onRemove(letter)}>
+              삭제
+            </button>
+          </>
         )}
       </span>
     </li>

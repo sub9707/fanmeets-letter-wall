@@ -9,6 +9,7 @@ export type Write =
   | { kind: 'setText'; id: string; text: string }
   | { kind: 'setStatus'; id: string; status: LetterStatus; readAt: number | null }
   | { kind: 'remove'; id: string }
+  | { kind: 'setPriorities'; ids: string[] }
   | { kind: 'unreadAll' }
   | { kind: 'clear' }
 
@@ -21,6 +22,7 @@ interface LetterRow {
   status: LetterStatus
   read_at: number | null
   jitter: number
+  priority: number | null
 }
 
 let client: postgres.Sql | undefined
@@ -49,6 +51,7 @@ const toLetter = (row: LetterRow): Letter => ({
   status: row.status,
   readAt: row.read_at,
   jitter: row.jitter,
+  priority: row.priority,
 })
 
 export interface Snapshot extends ServerState {
@@ -62,7 +65,7 @@ async function load(sql: Sql, lock: boolean): Promise<Snapshot> {
     : await sql<{ scene: Scene; version: number }[]>`SELECT scene, version::float8 AS version FROM room WHERE id = 1`
   if (!room) throw new Error('room 테이블이 비어 있습니다. npm run db:setup 을 실행하세요')
   const rows = await sql<LetterRow[]>`
-    SELECT id, text, created_at::float8 AS created_at, status, read_at::float8 AS read_at, jitter
+    SELECT id, text, created_at::float8 AS created_at, status, read_at::float8 AS read_at, jitter, priority
     FROM letters ORDER BY created_at, seq`
   return { letters: rows.map(toLetter), scene: room.scene, version: room.version }
 }
@@ -88,6 +91,10 @@ async function apply(sql: Sql, write: Write): Promise<void> {
       return
     case 'setStatus':
       await sql`UPDATE letters SET status = ${write.status}, read_at = ${write.readAt} WHERE id = ${write.id}`
+      return
+    case 'setPriorities':
+      await sql`UPDATE letters SET priority = NULL WHERE priority IS NOT NULL`
+      for (const [i, id] of write.ids.entries()) await sql`UPDATE letters SET priority = ${i + 1} WHERE id = ${id}`
       return
     case 'unreadAll':
       await sql`UPDATE letters SET status = 'wall', read_at = NULL WHERE status = 'read'`

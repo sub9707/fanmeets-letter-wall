@@ -1,6 +1,6 @@
 // 액션을 받아 다음 상태를 계산한다 (입출력 없음). DB 에 반영할 변경은 writes 로 돌려준다.
 import { MAX_LENGTH } from '../shared/constants.ts'
-import type { Action, Letter, Pose, Scene, ServerState } from '../shared/types.ts'
+import type { Action, Letter, Pose, Scatter, Scene, ServerState } from '../shared/types.ts'
 import type { Write } from './db.ts'
 
 export const initialScene = (): Scene => ({ phase: 'shuffle', scatter: null, openId: null, shuffleSeq: 0 })
@@ -36,6 +36,18 @@ const isPose = (p: unknown): p is Pose =>
   (['x', 'y', 'r', 's', 'z'] as const).every((k) => Number.isFinite((p as Record<string, unknown>)[k]))
 const statusOf = (state: ServerState, id: string) => state.letters.find((l) => l.id === id)?.status
 
+// 아직 읽지 않은 우선순위 편지 중 가장 앞 순서
+const nextPriority = (state: ServerState) =>
+  state.letters
+    .filter((l) => l.status === 'wall' && l.priority !== null)
+    .sort((a, b) => (a.priority as number) - (b.priority as number))[0]?.id
+
+// 두 편지의 흩뿌려진 자리를 맞바꾼다 (어느 한쪽이라도 자리가 없으면 그대로)
+function swapPoses(scatter: Scatter | null, a: string, b: string): Scatter | null {
+  if (!scatter || a === b || !scatter[a] || !scatter[b]) return scatter
+  return { ...scatter, [a]: scatter[b], [b]: scatter[a] }
+}
+
 const newLetter = (text: string, index: number): Letter => ({
   id: crypto.randomUUID(),
   text,
@@ -44,6 +56,7 @@ const newLetter = (text: string, index: number): Letter => ({
   status: 'wall',
   readAt: null,
   jitter: Math.random(),
+  priority: null,
 })
 
 type Handlers = {
@@ -68,9 +81,12 @@ const handlers: Handlers = {
     return withScene(state, { ...state.scene, scatter, shuffleSeq: state.scene.shuffleSeq + 1 })
   },
 
+  // 아직 읽지 않은 우선순위 편지가 있으면 고른 편지 대신 그 편지를 연다.
+  // 고른 자리에서 편지가 빠진 것처럼 보이게 두 편지의 자리도 맞바꾼다
   open(state, { id }) {
     if (statusOf(state, id) !== 'wall') return NOTHING(state)
-    return withScene(state, { ...state.scene, openId: id })
+    const openId = nextPriority(state) ?? id
+    return withScene(state, { ...state.scene, openId, scatter: swapPoses(state.scene.scatter, id, openId) })
   },
 
   // 읽던 편지를 닫으면 읽은 편지가 되어 화면에서 빠진다
@@ -102,6 +118,14 @@ const handlers: Handlers = {
     const writes: Write[] = [{ kind: 'remove', id }]
     if (state.scene.openId !== id) return lettersOnly(state, letters, writes)
     return withScene(state, { ...state.scene, openId: null }, letters, writes)
+  },
+
+  setPriorities(state, { ids }) {
+    if (!Array.isArray(ids) || !ids.every((id) => typeof id === 'string' && statusOf(state, id))) return NOTHING(state)
+    const unique = [...new Set(ids)]
+    const rank = new Map(unique.map((id, i) => [id, i + 1]))
+    const letters = state.letters.map((l) => ({ ...l, priority: rank.get(l.id) ?? null }))
+    return lettersOnly(state, letters, [{ kind: 'setPriorities', ids: unique }])
   },
 
   clear(state) {
