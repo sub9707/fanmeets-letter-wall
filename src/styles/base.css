@@ -148,3 +148,18 @@ button {
     transform: scale(0.85);
   }
 }
+
+/* 쓰기 화면의 전체화면 / 잠금 버튼 (KioskControls). 고객 눈에 덜 띄게 흐리게 */
+.kiosk-corner .btn {
+  opacity: 0.5;
+}
+
+.kiosk-unlock {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 18px;
+  opacity: 0.15;
+}
