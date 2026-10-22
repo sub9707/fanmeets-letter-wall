@@ -1,10 +1,10 @@
-# TO. BWS 편지 월
+# TO. WONI 편지 월
 
 팬미팅 Q&A 코너용 웹 앱. Vercel(Hobby) 에 올려 여러 PC·스크린에서 함께 씁니다.
 
 - 화면: Vite + React (TypeScript)
 - 서버: Vercel Function (`/api/state`, `/api/action`, 서울 리전 `icn1`)
-- 저장: Supabase Postgres (`letters` 편지, `room` 읽기 진행 상태)
+- 저장: Supabase Postgres (`letters_woni` 편지, `room_woni` 읽기 진행 상태). 지난 행사(BWS) 편지는 `letters_bws` / `room_bws` 에 백업
 - 실시간 동기화: 상태가 바뀌면 서버가 Supabase Realtime 채널(`letter-wall`)로 알리고, 각 화면이 `/api/state` 를 다시 받아옴
   (알림이 빠져도 10초마다 다시 받아옴). 액션은 `room` 줄을 잠근 트랜잭션에서 하나씩 처리
 - 폰트: 교촌 브랜드 규정 (국문 윤고딕 300대 장평 93·자간 -50, 영문·숫자·기호 DIN). `src/styles/fonts.css`
@@ -72,5 +72,6 @@ src/
   layout/          편지 배치 계산
   styles/          컴포넌트별 스타일
 assets-src/        원본 이미지·폰트 (저장소에 넣지 않음)
+dpcr/              지난 행사(BWS) 이미지 원본·변환본 보관 (저장소에 넣지 않음)
 scripts/           Vercel 출력, DB 설정, 이미지·폰트 변환 스크립트
 ```

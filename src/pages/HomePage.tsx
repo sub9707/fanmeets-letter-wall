@@ -1,4 +1,4 @@
-import toBws from '../assets/to-bws.webp'
+import toWoni from '../assets/to-woni.webp'
 import { PAGES } from '../config.ts'
 import '../styles/home.css'
 
@@ -12,7 +12,7 @@ const ENTRIES = [
 export default function HomePage() {
   return (
     <main className="home">
-      <img className="home-logo" src={toBws} alt="To. BWS" draggable={false} />
+      <img className="home-logo" src={toWoni} alt="To. WONI" draggable={false} />
       <nav className="home-entries">
         {ENTRIES.map((entry) => (
           <a key={entry.href} className="home-entry" href={entry.href}>

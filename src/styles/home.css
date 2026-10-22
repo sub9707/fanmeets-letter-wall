@@ -8,11 +8,12 @@
   gap: clamp(24px, 5vh, 64px);
   min-height: 100vh;
   padding: 32px 24px;
-  background: var(--bg) url('../assets/background.webp') center / cover no-repeat;
+  /* 배경 이미지에는 "To. WONI" 글씨가 그려져 있어 로고와 겹치므로, 첫 화면은 같은 분홍빛 그라데이션만 쓴다 */
+  background: linear-gradient(160deg, #f9cfe2 0%, #fde6ef 45%, #fff6f9 100%);
 }
 
 .home-logo {
-  width: min(520px, 70vw);
+  width: min(620px, 80vw);
 }
 
 .home-entries {

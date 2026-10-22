@@ -1,4 +1,4 @@
-// Postgres(Supabase) 의 letters / room 테이블 읽기·쓰기
+// Postgres(Supabase) 의 letters_woni / room_woni 테이블 읽기·쓰기
 import postgres from 'postgres'
 import type { Letter, LetterStatus, Scene, ServerState } from '../shared/types.ts'
 import { databaseUrl } from './env.ts'
@@ -24,6 +24,10 @@ interface LetterRow {
   jitter: number
   priority: number | null
 }
+
+// 행사마다 테이블을 따로 둔다 (지난 행사: letters_bws / room_bws 백업). supabase/schema.sql 과 맞춘다
+const LETTERS = 'letters_woni'
+const ROOM = 'room_woni'
 
 let client: postgres.Sql | undefined
 
@@ -61,12 +65,12 @@ export interface Snapshot extends ServerState {
 // BIGINT 는 문자열로 오므로 float8 로 바꿔 숫자로 받는다
 async function load(sql: Sql, lock: boolean): Promise<Snapshot> {
   const [room] = lock
-    ? await sql<{ scene: Scene; version: number }[]>`SELECT scene, version::float8 AS version FROM room WHERE id = 1 FOR UPDATE`
-    : await sql<{ scene: Scene; version: number }[]>`SELECT scene, version::float8 AS version FROM room WHERE id = 1`
-  if (!room) throw new Error('room 테이블이 비어 있습니다. npm run db:setup 을 실행하세요')
+    ? await sql<{ scene: Scene; version: number }[]>`SELECT scene, version::float8 AS version FROM ${sql(ROOM)} WHERE id = 1 FOR UPDATE`
+    : await sql<{ scene: Scene; version: number }[]>`SELECT scene, version::float8 AS version FROM ${sql(ROOM)} WHERE id = 1`
+  if (!room) throw new Error(`${ROOM} 테이블이 비어 있습니다. npm run db:setup 을 실행하세요`)
   const rows = await sql<LetterRow[]>`
     SELECT id, text, created_at::float8 AS created_at, status, read_at::float8 AS read_at, jitter, priority
-    FROM letters ORDER BY created_at, seq`
+    FROM ${sql(LETTERS)} ORDER BY created_at, seq`
   return { letters: rows.map(toLetter), scene: room.scene, version: room.version }
 }
 
@@ -83,27 +87,27 @@ async function apply(sql: Sql, write: Write): Promise<void> {
         read_at: l.readAt,
         jitter: l.jitter,
       }))
-      await sql`INSERT INTO letters ${sql(rows, 'id', 'text', 'created_at', 'status', 'read_at', 'jitter')}`
+      await sql`INSERT INTO ${sql(LETTERS)} ${sql(rows, 'id', 'text', 'created_at', 'status', 'read_at', 'jitter')}`
       return
     }
     case 'setText':
-      await sql`UPDATE letters SET text = ${write.text} WHERE id = ${write.id}`
+      await sql`UPDATE ${sql(LETTERS)} SET text = ${write.text} WHERE id = ${write.id}`
       return
     case 'setStatus':
-      await sql`UPDATE letters SET status = ${write.status}, read_at = ${write.readAt} WHERE id = ${write.id}`
+      await sql`UPDATE ${sql(LETTERS)} SET status = ${write.status}, read_at = ${write.readAt} WHERE id = ${write.id}`
       return
     case 'setPriorities':
-      await sql`UPDATE letters SET priority = NULL WHERE priority IS NOT NULL`
-      for (const [i, id] of write.ids.entries()) await sql`UPDATE letters SET priority = ${i + 1} WHERE id = ${id}`
+      await sql`UPDATE ${sql(LETTERS)} SET priority = NULL WHERE priority IS NOT NULL`
+      for (const [i, id] of write.ids.entries()) await sql`UPDATE ${sql(LETTERS)} SET priority = ${i + 1} WHERE id = ${id}`
       return
     case 'unreadAll':
-      await sql`UPDATE letters SET status = 'wall', read_at = NULL WHERE status = 'read'`
+      await sql`UPDATE ${sql(LETTERS)} SET status = 'wall', read_at = NULL WHERE status = 'read'`
       return
     case 'remove':
-      await sql`DELETE FROM letters WHERE id = ${write.id}`
+      await sql`DELETE FROM ${sql(LETTERS)} WHERE id = ${write.id}`
       return
     case 'clear':
-      await sql`DELETE FROM letters`
+      await sql`DELETE FROM ${sql(LETTERS)}`
       return
   }
 }
@@ -117,7 +121,7 @@ export interface Change {
 }
 
 /**
- * room 줄을 잠근 채로 지금 상태를 읽고, update 가 돌려준 변경을 한 트랜잭션으로 저장한다.
+ * room_woni 줄을 잠근 채로 지금 상태를 읽고, update 가 돌려준 변경을 한 트랜잭션으로 저장한다.
  * 여러 PC 에서 동시에 액션이 와도 하나씩 차례로 처리된다. 변경이 없으면 null 을 돌려준다.
  */
 export async function transact(update: (current: ServerState) => Change | null): Promise<Snapshot | null> {
@@ -128,9 +132,9 @@ export async function transact(update: (current: ServerState) => Change | null):
     for (const write of change.writes) await apply(sql, write)
     const { scene } = change.state
     if (change.sceneChanged) {
-      await sql`UPDATE room SET scene = ${sql.json(scene as unknown as postgres.JSONValue)}, version = version + 1 WHERE id = 1`
+      await sql`UPDATE ${sql(ROOM)} SET scene = ${sql.json(scene as unknown as postgres.JSONValue)}, version = version + 1 WHERE id = 1`
     } else {
-      await sql`UPDATE room SET version = version + 1 WHERE id = 1`
+      await sql`UPDATE ${sql(ROOM)} SET version = version + 1 WHERE id = 1`
     }
     return { ...change.state, version: current.version + 1 }
   })

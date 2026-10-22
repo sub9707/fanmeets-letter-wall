@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "TO. BWS Q&A 편지 월 (React + Vercel Functions + Supabase)",
+  "description": "TO. WONI Q&A 편지 월 (React + Vercel Functions + Supabase)",
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.server.json && tsc -p tsconfig.node.json",

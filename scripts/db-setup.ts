@@ -11,7 +11,7 @@ url.search = ''
 const sql = postgres(url.toString(), { ssl: 'require', max: 1, onnotice: () => {} })
 try {
   await sql.unsafe(readFileSync('supabase/schema.sql', 'utf8'))
-  const [{ count }] = await sql<{ count: number }[]>`SELECT count(*)::int AS count FROM letters`
+  const [{ count }] = await sql<{ count: number }[]>`SELECT count(*)::int AS count FROM letters_woni`
   console.log(`스키마 적용 완료 (편지 ${count}통)`)
 } finally {
   await sql.end()

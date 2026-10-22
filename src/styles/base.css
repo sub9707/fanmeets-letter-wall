@@ -2,10 +2,10 @@
    (무대를 통째로 확대·축소하므로 vw/vh 를 쓰지 않는다). */
 
 :root {
-  --bg: #f3f0ea;
+  --bg: #fde6ef;
   --ink: #2a1b15;
   --brown: #4a2c20;
-  --paper: #f1e3c6;
+  --paper: #fff4f8;
   --seal: #a3262a;
   /* 감속·가속이 모두 있는 이동 곡선 */
   --ease-move: cubic-bezier(0.65, 0, 0.35, 1);
@@ -16,8 +16,6 @@
   --read-fade-ms: 1500ms;
   /* 배경에 쌓인 편지의 불투명도 (선택 단계 제외) */
   --wall-opacity: 0.6;
-  /* 배경 펜 글씨의 진하기 */
-  --pen-opacity: 0.9;
 }
 
 * {
@@ -51,7 +49,7 @@ button {
   cursor: pointer;
 }
 
-/* 창 전체. 무대 밖으로 남는 곳도 같은 종이 배경이 이어진다 */
+/* 창 전체. 배경 가운데에 "To. WONI" 글씨가 그려져 있고, 무대 밖으로 남는 곳도 같은 배경이 이어진다 */
 .viewport {
   position: fixed;
   inset: 0;
@@ -66,18 +64,6 @@ button {
   top: 50%;
   left: 50%;
   transform-origin: center;
-}
-
-/* 무대 중앙 배경의 펜 글씨 "To. BWS" (편지보다 뒤) */
-.watermark {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 0;
-  width: 1075px;
-  opacity: var(--pen-opacity);
-  transform: translate(-50%, -50%);
-  pointer-events: none;
 }
 
 /* ───────── 버튼 ───────── */

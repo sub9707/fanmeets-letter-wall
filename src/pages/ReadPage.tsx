@@ -5,7 +5,6 @@ import LetterLayer from '../components/LetterLayer.tsx'
 import LetterModal from '../components/LetterModal.tsx'
 import ReadControls from '../components/ReadControls.tsx'
 import Stage from '../components/Stage.tsx'
-import Watermark from '../components/Watermark.tsx'
 import { useKeyDown } from '../hooks/useKeyDown.ts'
 import { useMoving } from '../hooks/useMoving.ts'
 import { useReadActions } from '../hooks/useReadActions.ts'
@@ -45,7 +44,6 @@ export default function ReadPage() {
 
   return (
     <Stage className={stageClass}>
-      <Watermark />
       {ready && <LetterLayer letters={letters} scatter={scene.scatter} onPick={actions.pick} />}
       <ReadControls phase={scene.phase} onShuffle={actions.shuffle} onSelect={actions.select} onReset={actions.reset} />
       {openLetter && <LetterModal letter={openLetter} onClose={actions.closeLetter} />}

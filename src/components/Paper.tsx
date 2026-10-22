@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import toBws from '../assets/to-bws.webp'
 import '../styles/paper.css'
 
 // 글이 길수록 글자를 줄여 최대 글자 수(200자)까지 편지지 안에 담는다
@@ -14,11 +13,10 @@ interface Props {
   children?: ReactNode
 }
 
-// 편지지. 읽기 모달과 작성 화면이 같이 쓴다
+// 편지지. 읽기 모달과 작성 화면이 같이 쓴다. "To. WONI" 제목은 편지지 이미지에 그려져 있다
 export default function Paper({ text, placeholder = '', compact = false, children }: Props) {
   return (
     <div className={`paper ${compact ? 'compact' : ''}`}>
-      <img className="paper-title" src={toBws} alt="To. BWS" draggable={false} />
       <p className={`paper-text ${sizeClass(text.length)} ${text ? '' : 'empty'}`}>{text ? `“${text}”` : placeholder}</p>
       {children}
     </div>

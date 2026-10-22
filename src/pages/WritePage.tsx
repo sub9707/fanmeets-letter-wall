@@ -4,7 +4,6 @@ import ConnectionBadge from '../components/ConnectionBadge.tsx'
 import KioskControls, { type PinMode } from '../components/KioskControls.tsx'
 import LetterLayer from '../components/LetterLayer.tsx'
 import Stage from '../components/Stage.tsx'
-import Watermark from '../components/Watermark.tsx'
 import { useKioskLock } from '../hooks/useKioskLock.ts'
 import { useServerState } from '../net/useServerState.ts'
 
@@ -21,7 +20,6 @@ export default function WritePage() {
 
   return (
     <Stage className="writing">
-      <Watermark />
       {ready && <LetterLayer letters={letters} scatter={null} />}
       <Composer active={ready && !blocked} onSubmit={submit} />
       <KioskControls kiosk={kiosk} pin={pin} onPin={setPin} />

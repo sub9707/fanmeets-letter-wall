@@ -7,3 +7,5 @@ assets-src
 # 예전 Cloudflare 로컬 개발 흔적
 .wrangler
 .dev.vars
+# 지난 행사(BWS) 이미지 원본·변환본 보관
+dpcr
