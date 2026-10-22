@@ -10,7 +10,7 @@ export const MAX_STAGGER = 90 // 섞을 때 편지마다 출발 시점을 살짝
 export const READ_FADE_MS = 1500 // 읽은 편지가 서서히 사라지는 시간 (styles/base.css 의 --read-fade-ms 와 같은 값)
 
 /** 쓰기 화면 전체화면 잠금 · 해제 비밀번호 */
-export const KIOSK_PIN = '1013'
+export const KIOSK_PIN = 'howdoyoudo'
 
 /** 페이지 주소 */
 export const PAGES = {
